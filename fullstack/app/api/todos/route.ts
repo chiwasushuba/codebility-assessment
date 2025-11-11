@@ -23,9 +23,32 @@ export async function POST(req: NextRequest) {
   try {
     const uid = await getUserId(req);
     const data = await req.json();
-    const todo = await prisma.todo.create({
-      data: { title: data.title, userId: uid },
+    const todo = await prisma.todo.create({ data: { title: data.title, userId: uid } });
+    return NextResponse.json(todo);
+  } catch (err) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const uid = await getUserId(req);
+    const { id, title, completed } = await req.json();
+    const todo = await prisma.todo.updateMany({
+      where: { id, userId: uid },
+      data: { title, completed },
     });
+    return NextResponse.json(todo);
+  } catch (err) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const uid = await getUserId(req);
+    const { id } = await req.json();
+    const todo = await prisma.todo.deleteMany({ where: { id, userId: uid } });
     return NextResponse.json(todo);
   } catch (err) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

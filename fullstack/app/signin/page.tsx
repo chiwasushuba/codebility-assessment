@@ -37,11 +37,16 @@ export default function SignInPage() {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithPopup(auth, provider);
-      router.push("/todo");
+      router.push("/");
     } catch (err: any) {
       setError(err.message);
     }
   };
+
+  if (auth.currentUser) {
+    router.push("/");
+    return <p>Redirecting...</p>;
+  }
 
   return (
     <div className="max-w-md mx-auto p-4 flex flex-col gap-3">
